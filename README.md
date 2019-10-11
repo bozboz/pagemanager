@@ -48,7 +48,7 @@ composer require bozboz/pagemanager
 3) Publish the views, migrations and the PageTemplates trait:
 
 ```bash
-php artisan vendor:publish --provider="Backpack\PageManager\PageManagerServiceProvider"
+php artisan vendor:publish --provider="Backpack\PageManager\PageManagerServiceProvider" --force
 ```
 
 4) Run the migration to have the database table we need:

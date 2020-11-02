@@ -64,7 +64,7 @@ trait PageTemplates
         );
     }
 
-    private function basic_page()
+    private function basicPage()
     {
 
         $this->metas();

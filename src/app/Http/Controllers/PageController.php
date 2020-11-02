@@ -8,15 +8,14 @@ use App\Http\Controllers\Controller;
 class PageController extends Controller
 {
     public function index($slug, $subs = null)
-    {        
-        if($subs) {
+    {
+        if ($subs) {
             $slug = $slug.'/'.$subs;
         }
 
         $page = Page::findByFullPathSlug($slug);
 
-        if (!$page)
-        {
+        if (!$page) {
             abort(404, 'Please go back to our <a href="'.url('').'">homepage</a>.');
         }
 

@@ -14,7 +14,8 @@ class CreatePagesTable extends Migration
     {
         // TODO: use JSON data type for 'extras' instead of string
         Schema::create(
-            'pages', function (Blueprint $table) {
+            'pages',
+            function (Blueprint $table) {
                 $table->increments('id');
                 $table->string('template');
                 $table->string('name');
@@ -31,7 +32,6 @@ class CreatePagesTable extends Migration
 
                 $table->timestamps();
                 $table->softDeletes();
-
             }
         );
     }

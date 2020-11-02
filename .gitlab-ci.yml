@@ -9,7 +9,7 @@ codestyle:
   stage: testing
   image: lorisleiva/laravel-docker
   script:
-    - phpcs --extensions=php --standard=PSR2 src
+    - phpcs
 
 phpcpd:
   stage: testing

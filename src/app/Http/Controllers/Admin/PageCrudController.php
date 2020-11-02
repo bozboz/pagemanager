@@ -34,7 +34,6 @@ class PageCrudController extends CrudController
         if (!$this->request->has('order')) {
             $this->crud->orderBy('lft');
         }
-
     }
 
     protected function setupReorderOperation()
@@ -84,7 +83,6 @@ class PageCrudController extends CrudController
                                     return $len > $limit ?
                                              "...".substr($entry->fullPathSlug, $len-$limit-1, $len-1)
                                              : $entry->fullPathSlug;
-
                                 },
                                 'limit' => 300 // essentiall overriden by the above logic
             ]
@@ -131,7 +129,7 @@ class PageCrudController extends CrudController
      * $preSave and $postSave exist for extending purposes.
      * Eg. you want to use Visual Composer
      */
-    public function clone($id, $preSave=null, $postSave=null)
+    public function clone($id, $preSave = null, $postSave = null)
     {
         $this->crud->hasAccessOrFail('create');
         $clonedPage = $this->crud->model->findOrFail($id)->replicate();
@@ -163,7 +161,6 @@ class PageCrudController extends CrudController
         */
 
         return (string) $clonedPage->push();
-
     }
 
 
@@ -230,7 +227,6 @@ class PageCrudController extends CrudController
             // 'disabled' => 'disabled'
             ]
         );
-
     }
 
     /**

@@ -152,33 +152,31 @@ class Page extends Model
         return $this->semanticPagePathAsString();
     }
 
-    public function pagePathAsString($includeSelf=false, $sep=' ⇨ ', $useSlug = false)
+    public function pagePathAsString($includeSelf = false, $sep = ' ⇨ ', $useSlug = false)
     {
 
         $ancestorTokens = [];
 
         $instance = $this;
 
-        if($includeSelf) {
+        if ($includeSelf) {
             $ancestorTokens[] = $useSlug ? $this->slug : $this->name;
         }
 
-        while($instance->parent_id){
+        while ($instance->parent_id) {
             $instance = $instance->parentPage;
             $ancestorTokens[] = $useSlug ? $instance->slug : $instance->name;
         }
 
         return join($sep, array_reverse($ancestorTokens));
-
     }
 
     private function isLastSibling()
     {
-        if($this->parentPage) {
+        if ($this->parentPage) {
             $lastSibling = $this->parentPage->children->last();
             return $lastSibling->id == $this->id;
-        }
-        else  {
+        } else {
             return (Page::where('parent_id', null)
                 ->orderBy('lft', 'desc')
                 ->limit(1)

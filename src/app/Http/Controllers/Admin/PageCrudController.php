@@ -31,7 +31,7 @@ class PageCrudController extends CrudController
         $this->crud->setRoute(config('backpack.base.route_prefix').'/page');
         $this->crud->setEntityNameStrings(trans('backpack::pagemanager.page'), trans('backpack::pagemanager.pages'));
 
-        if (!$this->request->has('order')) {
+        if (!\Request::has('order')) {
             $this->crud->orderBy('lft');
         }
     }

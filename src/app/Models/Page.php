@@ -58,11 +58,6 @@ class Page extends Model
         return str_replace('_', ' ', Str::title(Str::snake($this->template, ' ')));
     }
 
-    public function getPageLink()
-    {
-        return url($this->slug);
-    }
-
     public function getOpenButton()
     {
         return '<a class="btn btn-sm btn-link" href="'.$this->getPageLink().'" target="_blank">'.
@@ -154,7 +149,6 @@ class Page extends Model
 
     public function pagePathAsString($includeSelf = false, $sep = ' ⇨ ', $useSlug = false)
     {
-
         $ancestorTokens = [];
 
         $instance = $this;

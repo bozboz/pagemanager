@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreatePagesTable extends Migration
 {
@@ -13,25 +13,27 @@ class CreatePagesTable extends Migration
     public function up()
     {
         // TODO: use JSON data type for 'extras' instead of string
-        Schema::create('pages', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('template');
-            $table->string('name');
-            $table->string('title');
-            $table->string('slug');
-            $table->text('content')->nullable();
-            $table->text('extras')->nullable();
+        Schema::create(
+            'pages', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('template');
+                $table->string('name');
+                $table->string('title');
+                $table->string('slug');
+                $table->text('content')->nullable();
+                $table->text('extras')->nullable();
 
-            // Allows ordering
-            $table->unsignedInteger('parent_id')->nullable();
-            $table->unsignedInteger('lft')->nullable();
-            $table->unsignedInteger('rgt')->nullable();
-            $table->unsignedInteger('depth')->nullable();
+                // Allows ordering
+                $table->unsignedInteger('parent_id')->nullable();
+                $table->unsignedInteger('lft')->nullable();
+                $table->unsignedInteger('rgt')->nullable();
+                $table->unsignedInteger('depth')->nullable();
 
-            $table->timestamps();
-            $table->softDeletes();
-            
-        });
+                $table->timestamps();
+                $table->softDeletes();
+
+            }
+        );
     }
 
     /**

@@ -5,6 +5,62 @@ All Notable changes to `BackPack\PageManager` will be documented in this file.
 Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) principles.
 
 ------
+IMPORTANT
+------
+
+We no longer use this file to track changes. Please see our repo's "Releases" tab, on Github:
+https://github.com/Laravel-Backpack/PageManager/releases
+
+------
+
+## 3.0.0 - 2020-05-06
+
+### Added
+- support for Backpack 4.1;
+
+### Removed
+- support for Backpack 4.0;
+- laravel/helpers dependency;
+
+
+------
+
+
+## 2.0.7 - 2020-03-05
+
+### Fixed
+- upgraded PHPUnit to 9 or 7;
+
+
+## 2.0.6 - 2020-03-05
+
+### Added
+- support for Laravel 7;
+
+
+## 2.0.5 - 2020-01-14
+
+### Added
+- merged #101 - added Indonesian language file;
+
+
+## 2.0.4 - 2019-12-19
+
+### Added
+- Farsi (Persian) language file;
+
+
+## 2.0.3 - 2019-12-17
+
+### Fixed
+- fixed #98 - allow installation on Backpack 4.0 on Laravel 5.8;
+
+
+## 2.0.2 - 2019-11-17
+
+### Added
+- Russian language translation;
+
 
 ## 2.0.1 - 2019-10-04
 

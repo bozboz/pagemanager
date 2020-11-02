@@ -6,12 +6,15 @@ use App\PageTemplates;
 // VALIDATION: change the requests to match your own file names if you need form validation
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\PageManager\app\Http\Requests\PageRequest;
+use Str;
 
 class PageCrudController extends CrudController
 {
     use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation { create as traitCreate; }
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation { edit as traitEdit; }
+    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation { create as traitCreate;
+    }
+    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation { edit as traitEdit;
+    }
     use \Backpack\CRUD\app\Http\Controllers\Operations\CloneOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ReorderOperation;
@@ -23,11 +26,11 @@ class PageCrudController extends CrudController
 
         $this->crud->allowAccess('clone');
         $this->crud->setDefaultPageLength(-1); // show all
-        
+
         $this->crud->setModel(config('backpack.pagemanager.page_model_class', 'Backpack\PageManager\app\Models\Page'));
         $this->crud->setRoute(config('backpack.base.route_prefix').'/page');
         $this->crud->setEntityNameStrings(trans('backpack::pagemanager.page'), trans('backpack::pagemanager.pages'));
-    
+
         if (!$this->request->has('order')) {
             $this->crud->orderBy('lft');
         }
@@ -36,7 +39,7 @@ class PageCrudController extends CrudController
 
     protected function setupReorderOperation()
     {
-        // define which model attribute will be shown on draggable elements 
+        // define which model attribute will be shown on draggable elements
         $this->crud->set('reorder.label', 'name');
         // define how deep the admin is allowed to nest the items
         // for infinite levels, set it to 0
@@ -47,26 +50,31 @@ class PageCrudController extends CrudController
     {
 
 
-        $this->crud->addColumn([
+        $this->crud->addColumn(
+            [
             'name' => 'semanticPath',
             'label' => 'Page',
             'orderable' => false,
-        ]);
+            ]
+        );
 
-        $this->crud->addColumn([
+        $this->crud->addColumn(
+            [
                                 'name' => 'template',
                                 'label' => trans('backpack::pagemanager.template'),
                                 'type' => 'model_function',
                                 'function_name' => 'getTemplateName',
                                 'orderable' => false,
-        ]);
+            ]
+        );
 
-        $this->crud->addColumn([
+        $this->crud->addColumn(
+            [
                                 'name' => 'full_path_slug',
                                 'label' => trans('backpack::pagemanager.slug'),
                                 'orderable' => false,
                                 'type' => 'closure',
-                                'function' => function($entry) {
+                                'function' => function ($entry) {
 
                                     // if slug is too long, truncate backwards, so we can still read it
 
@@ -74,12 +82,13 @@ class PageCrudController extends CrudController
                                     $limit = 60;
 
                                     return $len > $limit ?
-                                             "...".substr($entry->fullPathSlug,$len-$limit-1,$len-1)
+                                             "...".substr($entry->fullPathSlug, $len-$limit-1, $len-1)
                                              : $entry->fullPathSlug;
 
                                 },
                                 'limit' => 300 // essentiall overriden by the above logic
-        ]);
+            ]
+        );
 
 
         $this->crud->addButtonFromModelFunction('line', 'open', 'getOpenButton', 'beginning');
@@ -120,7 +129,7 @@ class PageCrudController extends CrudController
 
     /**
      * $preSave and $postSave exist for extending purposes.
-     * Eg. you want to use Visual Composer 
+     * Eg. you want to use Visual Composer
      */
     public function clone($id, $preSave=null, $postSave=null)
     {
@@ -130,7 +139,7 @@ class PageCrudController extends CrudController
         if (is_callable($preSave)) {
             $preSave();
         }
-        
+
         /*
         $clonedVisualComposerRows = VisualComposerRow::where('model_id', $id)
                                                         ->where('model_class', get_class($this->crud->model))
@@ -154,7 +163,7 @@ class PageCrudController extends CrudController
         */
 
         return (string) $clonedPage->push();
-        
+
     }
 
 
@@ -165,7 +174,8 @@ class PageCrudController extends CrudController
      */
     public function addDefaultPageFields($template = false)
     {
-        $this->crud->addField([
+        $this->crud->addField(
+            [
             'name' => 'template',
             'label' => trans('backpack::pagemanager.template'),
             'type' => 'select_page_template',
@@ -176,8 +186,10 @@ class PageCrudController extends CrudController
             'wrapperAttributes' => [
                 'class' => 'form-group col-md-6',
             ],
-        ]);
-        $this->crud->addField([
+            ]
+        );
+        $this->crud->addField(
+            [
             'name' => 'name',
             'label' => trans('backpack::pagemanager.page_name'),
             'type' => 'text',
@@ -185,15 +197,19 @@ class PageCrudController extends CrudController
                 'class' => 'form-group col-md-6',
             ],
             // 'disabled' => 'disabled'
-        ]);
-        $this->crud->addField([
+            ]
+        );
+        $this->crud->addField(
+            [
             'name' => 'title',
             'label' => trans('backpack::pagemanager.page_title'),
             'type' => 'text',
             // 'disabled' => 'disabled'
-        ]);
+            ]
+        );
 
-        $this->crud->addField([
+        $this->crud->addField(
+            [
             'name' => 'path_slug',
             'label' => 'Path Slug',
             'hint' => 'Automatically generated from the grouping & ordering of the page.',
@@ -202,22 +218,25 @@ class PageCrudController extends CrudController
                 'readonly'=>'readonly',
                 'disabled'=>'disabled',
             ]
-        ]); 
+            ]
+        );
 
-        $this->crud->addField([
+        $this->crud->addField(
+            [
             'name' => 'slug',
             'label' => trans('backpack::pagemanager.page_slug'),
             'type' => 'text',
             'hint' => trans('backpack::pagemanager.page_slug_hint'),
             // 'disabled' => 'disabled'
-        ]);
-        
+            ]
+        );
+
     }
 
     /**
      * Add the fields defined for a specific template.
      *
-     * @param  string $template_name The name of the template that should be used in the current form.
+     * @param string $template_name The name of the template that should be used in the current form.
      */
     public function useTemplate($template_name = false)
     {
@@ -261,7 +280,7 @@ class PageCrudController extends CrudController
         $templates = $this->getTemplates();
 
         foreach ($templates as $template) {
-            $templates_array[$template->name] = str_replace('_', ' ', title_case($template->name));
+            $templates_array[$template->name] = str_replace('_', ' ', Str::title(Str::snake($template->name, ' ')));
         }
 
         return $templates_array;

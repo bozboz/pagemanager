@@ -2,9 +2,9 @@
 
 namespace Backpack\PageManager;
 
-use Route;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
+use Route;
 
 class PageManagerServiceProvider extends ServiceProvider
 {
@@ -36,7 +36,7 @@ class PageManagerServiceProvider extends ServiceProvider
         // publish migrations
         $this->publishes([__DIR__.'/database/migrations' => database_path('migrations')], 'migrations');
         // publish controller
-        $this->publishes([__DIR__.'/app/Http/Controllers/PageController.php' => app_path('Http/Controllers/PageController.php')], 'controller');
+        // $this->publishes([__DIR__.'/app/Http/Controllers/PageController.php' => app_path('Http/Controllers/PageController.php')], 'controller');
         // public config
         $this->publishes([__DIR__.'/config/pagemanager.php' => config_path('backpack/pagemanager.php')]);
         // public languages
@@ -49,7 +49,7 @@ class PageManagerServiceProvider extends ServiceProvider
     /**
      * Define the routes for the application.
      *
-     * @param  \Illuminate\Routing\Router  $router
+     * @param  \Illuminate\Routing\Router $router
      * @return void
      */
     public function setupRoutes(Router $router)

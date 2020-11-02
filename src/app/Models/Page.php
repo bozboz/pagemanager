@@ -2,10 +2,11 @@
 
 namespace Backpack\PageManager\app\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Cviebrock\EloquentSluggable\Sluggable;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
+use Cviebrock\EloquentSluggable\Sluggable;
 use Cviebrock\EloquentSluggable\SluggableScopeHelpers;
+use Illuminate\Database\Eloquent\Model;
+use Str;
 
 class Page extends Model
 {
@@ -54,15 +55,37 @@ class Page extends Model
 
     public function getTemplateName()
     {
-        return str_replace('_', ' ', title_case($this->template));
+        return str_replace('_', ' ', Str::title(Str::snake($this->template, ' ')));
+    }
+
+    public function getPageLink()
+    {
+        return url($this->slug);
     }
 
     public function getOpenButton()
     {
         return '<a class="btn btn-sm btn-link" href="'.$this->getPageLink().'" target="_blank">'.
-            '<i class="fa fa-eye"></i> '.trans('backpack::pagemanager.open').'</a>';
+            '<i class="la la-eye"></i> '.trans('backpack::pagemanager.open').'</a>';
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | RELATIONS
+    |--------------------------------------------------------------------------
+    */
+
+    /*
+    |--------------------------------------------------------------------------
+    | SCOPES
+    |--------------------------------------------------------------------------
+    */
+
+    /*
+    |--------------------------------------------------------------------------
+    | ACCESORS
+    |--------------------------------------------------------------------------
+    */
 
     // The slug is created automatically from the "name" field if no slug exists.
     public function getSlugOrTitleAttribute()
@@ -76,22 +99,24 @@ class Page extends Model
 
     public static function findByFullPathSlug($path)
     {
-        return collect(explode('/', $path))->filter()->reduce(function ($page, $slug) {
-          if (! $page) {
-              return static::where('slug', $slug)->whereNull('parent_id')->firstOrfail();
-          }
-          return $page->children()->where('slug', $slug)->firstOrFail();
-      });
+        return collect(explode('/', $path))->filter()->reduce(
+            function ($page, $slug) {
+                if (! $page) {
+                    return static::where('slug', $slug)->whereNull('parent_id')->firstOrfail();
+                }
+                return $page->children()->where('slug', $slug)->firstOrFail();
+            }
+        );
     }
 
     public function parentPage()
     {
-      return $this->belongsTo(Page::class, 'parent_id');
+        return $this->belongsTo(Page::class, 'parent_id');
     }
 
     public function children()
     {
-      return $this->hasMany(Page::class, 'parent_id')->orderBy('lft');
+        return $this->hasMany(Page::class, 'parent_id')->orderBy('lft');
     }
 
     /**
@@ -99,107 +124,107 @@ class Page extends Model
      */
     public function getPageLink()
     {
-      return url($this->fullPathSlug);
+        return url($this->fullPathSlug);
     }
 
     public function getPathAttribute()
     {
-      return $this->pagePathAsString();
+        return $this->pagePathAsString();
     }
 
     public function getFullPathAttribute()
     {
-      return $this->pagePathAsString(true);
+        return $this->pagePathAsString(true);
     }
 
     public function getFullPathSlugAttribute()
     {
-      return $this->pagePathAsString(true, '/', true);
+        return $this->pagePathAsString(true, '/', true);
     }
 
     public function getPathSlugAttribute()
     {
-      return $this->pagePathAsString(false, '/', true);
+        return $this->pagePathAsString(false, '/', true);
     }
 
     public function getSemanticPathAttribute()
     {
-      return $this->semanticPagePathAsString();
+        return $this->semanticPagePathAsString();
     }
 
     public function pagePathAsString($includeSelf=false, $sep=' ⇨ ', $useSlug = false)
     {
 
-      $ancestorTokens = [];
+        $ancestorTokens = [];
 
-      $instance = $this;
+        $instance = $this;
 
-      if($includeSelf) {
-        $ancestorTokens[] = $useSlug ? $this->slug : $this->name;
-      }
-      
-      while($instance->parent_id){
-        $instance = $instance->parentPage;
-        $ancestorTokens[] = $useSlug ? $instance->slug : $instance->name;
-      }
+        if($includeSelf) {
+            $ancestorTokens[] = $useSlug ? $this->slug : $this->name;
+        }
 
-      return join($sep, array_reverse($ancestorTokens) );
+        while($instance->parent_id){
+            $instance = $instance->parentPage;
+            $ancestorTokens[] = $useSlug ? $instance->slug : $instance->name;
+        }
+
+        return join($sep, array_reverse($ancestorTokens));
 
     }
 
     private function isLastSibling()
     {
-      if($this->parentPage){
-        $lastSibling = $this->parentPage->children->last();
-        return $lastSibling->id == $this->id;
-      } 
-      else  {
-        return (Page::where('parent_id', null)
-                            ->orderBy('lft', 'desc')
-                            ->limit(1)
-                            ->get()
-                            ->last()
-                            ->id == $this->id);
-      }
+        if($this->parentPage) {
+            $lastSibling = $this->parentPage->children->last();
+            return $lastSibling->id == $this->id;
+        }
+        else  {
+            return (Page::where('parent_id', null)
+                ->orderBy('lft', 'desc')
+                ->limit(1)
+                ->get()
+                ->last()
+                ->id == $this->id);
+        }
     }
 
     public function semanticPagePathAsString($useSlug = false)
     {
 
-      // TODO, modernise the ascii rendering and remove this early return.
-      return $this->name;
+        // TODO, modernise the ascii rendering and remove this early return.
+        return $this->name;
 
-      /*
-      $ancestorTokens = [];
-      $instance = $this;
-      
-      while($instance->parent_id){
+        /*
+        $ancestorTokens = [];
+        $instance = $this;
+
+        while($instance->parent_id){
         $instance = $instance->parentPage;
         $ancestorTokens[] = $instance;
-      }
+        }
 
-      $semanticPath = "";
+        $semanticPath = "";
 
-      foreach(array_reverse($ancestorTokens) as $instance) {
-        
-      if($instance->parentPage) {
+        foreach(array_reverse($ancestorTokens) as $instance) {
+
+        if($instance->parentPage) {
         foreach($instance->parentPage->children as $grand) {
           if($grand->lft > $instance->lft) {
             $semanticPath .= '│ ';
           }
         }
-      } else {
+        } else {
         $semanticPath .= '│ ';
-      }
+        }
 
         $semanticPath .= '　' ;
-      }
+        }
 
-      $semanticPath .= $this->isLastSibling() ? '└─ ' : '├─ '; 
-      $semanticPath .=  $useSlug ? $this->slug : $this->name;
-      
-      
-      return $semanticPath;
-      */
+        $semanticPath .= $this->isLastSibling() ? '└─ ' : '├─ ';
+        $semanticPath .=  $useSlug ? $this->slug : $this->name;
+
+
+        return $semanticPath;
+        */
     }
 }

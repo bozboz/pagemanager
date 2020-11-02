@@ -9,7 +9,7 @@ Forked from [Backpack PageManager](https://github.com/Laravel-Backpack/PageManag
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-An interface to let your admins add and edit presentation pages to your Laravel 6/5 website, by defining page templates with any number of content areas and any number of content types. Uses [Laravel Backpack](https://github.com/laravel-backpack).
+An interface to let your admins add and edit presentation pages to your Laravel 6, 7 or 8 website, by defining page templates with any number of content areas and any number of content types. Uses [Laravel Backpack](https://github.com/laravel-backpack).
 
 ![Backpack PageManager edit page](https://backpackforlaravel.com/uploads/screenshots/page_edit.png "PageManager edit page")
 
@@ -20,14 +20,7 @@ An interface to let your admins add and edit presentation pages to your Laravel 
 
 ## Install
 
-1) Add a file to define your page templates in ```app/PageTemplates.php``` with the terminal command .. 
-
-```bash
-printf '%s\n' '<?php' 'namespace App;' 'trait PageTemplates {}'  >app/PageTemplates.php
-```
-
-or do it manually.. 
-
+1) Add a file to define your page templates in ```app/PageTemplates.php```:
 ```php
 <?php
 
@@ -35,7 +28,70 @@ namespace App;
 
 trait PageTemplates
 {
-    // this will be filled on publish
+    /*
+    |--------------------------------------------------------------------------
+    | Page Templates for Backpack\PageManager
+    |--------------------------------------------------------------------------
+    |
+    | Each page template has its own method, that define what fields should show up using the Backpack\CRUD API.
+    | Use snake_case for naming and PageManager will make sure it looks pretty in the create/update form
+    | template dropdown.
+    |
+    | Any fields defined here will show up after the standard page fields:
+    | - select template
+    | - page name (only seen by admins)
+    | - page title
+    | - page slug
+    */
+
+    private function services()
+    {
+        $this->crud->addField([   // CustomHTML
+                        'name' => 'metas_separator',
+                        'type' => 'custom_html',
+                        'value' => '<br><h2>'.trans('backpack::pagemanager.metas').'</h2><hr>',
+                    ]);
+        $this->crud->addField([
+                        'name' => 'meta_title',
+                        'label' => trans('backpack::pagemanager.meta_title'),
+                        'fake' => true,
+                        'store_in' => 'extras',
+                    ]);
+        $this->crud->addField([
+                        'name' => 'meta_description',
+                        'label' => trans('backpack::pagemanager.meta_description'),
+                        'fake' => true,
+                        'store_in' => 'extras',
+                    ]);
+        $this->crud->addField([
+                        'name' => 'meta_keywords',
+                        'type' => 'textarea',
+                        'label' => trans('backpack::pagemanager.meta_keywords'),
+                        'fake' => true,
+                        'store_in' => 'extras',
+                    ]);
+        $this->crud->addField([   // CustomHTML
+                        'name' => 'content_separator',
+                        'type' => 'custom_html',
+                        'value' => '<br><h2>'.trans('backpack::pagemanager.content').'</h2><hr>',
+                    ]);
+        $this->crud->addField([
+                        'name' => 'content',
+                        'label' => trans('backpack::pagemanager.content'),
+                        'type' => 'wysiwyg',
+                        'placeholder' => trans('backpack::pagemanager.content_placeholder'),
+                    ]);
+    }
+
+    private function about_us()
+    {
+        $this->crud->addField([
+                        'name' => 'content',
+                        'label' => trans('backpack::pagemanager.content'),
+                        'type' => 'wysiwyg',
+                        'placeholder' => trans('backpack::pagemanager.content_placeholder'),
+                    ]);
+    }
 }
 ```
 
@@ -47,26 +103,20 @@ composer require bozboz/pagemanager
 
 3) Publish the views, migrations and the PageTemplates trait:
 
-```bash
-php artisan vendor:publish --provider="Backpack\PageManager\PageManagerServiceProvider" --force
+```
+php artisan vendor:publish --provider="Backpack\PageManager\PageManagerServiceProvider"
 ```
 
 4) Run the migration to have the database table we need:
 
-```bash
+```
 php artisan migrate
 ```
 
-5) Add a menu item for it in resources/views/vendor/backpack/base/inc/sidebar.blade.php or menu.blade.php:
+5) [optional] Add a menu item for it in resources/views/vendor/backpack/base/inc/sidebar.blade.php or menu.blade.php:
 
-```bash
+```
 php artisan backpack:add-sidebar-content "<li class='nav-item'><a class='nav-link' href='{{ backpack_url('page') }}'><i class='nav-icon fa fa-file-o'></i> <span>Pages</span></a></li>"
-```
-
-This will publish a bunch of things but most importantly..
-```
-PageController // the controller which pages are routed to
-PageTemplates // where you define the templates, use protected for internal methods, like repeating metas.
 ```
 
 
@@ -79,15 +129,42 @@ PageTemplates // where you define the templates, use protected for internal meth
 
 No front-end is provided (Backpack only takes care of the admin panel), but for most projects this front-end code will be all you need:
 
-(1) Create a catch-all route at the end of your routes file: 
+(1) Create a catch-all route at the end of your routes file:
 ```php
-Route::get('/', 'PageController@home');
 /** CATCH-ALL ROUTE for Backpack/PageManager - needs to be at the end of your routes.php file  **/
-Route::get('{page}/{subs?}', ['uses' => 'PageController@index'])
-    ->where(['page' => '^(((?=(?!admin))(?=(?!\/)).))*$', 'subs' => '(.*)']);
+Route::get('{page}/{subs?}', ['uses' => '\App\Http\Controllers\PageController@index'])
+    ->where(['page' => '^(((?=(?!admin))(?=(?!\/)).))*$', 'subs' => '.*']);
 ```
 
-(2) Create the views for those templates (how those pages actually look - the HTML CSS JS) and place them in your ```resources/views/pages/``` directory. Inside those blade files, you can use the ```$page``` variable. That's where all the page content is stored. For more complicated pages, you can also use [fake fields](https://laravel-backpack.readme.io/docs/crud#section-extras-fake-fields-stored-as-json-in-the-database-) in your page templates. You'll also find those attributes in the ```$page``` variable.
+(2) Create ```app\Http\Controllers\PageController.php``` that actually shows the page.
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use Backpack\PageManager\app\Models\Page;
+use App\Http\Controllers\Controller;
+
+class PageController extends Controller
+{
+    public function index($slug, $subs = null)
+    {
+        $page = Page::findBySlug($slug);
+
+        if (!$page)
+        {
+            abort(404, 'Please go back to our <a href="'.url('').'">homepage</a>.');
+        }
+
+        $this->data['title'] = $page->title;
+        $this->data['page'] = $page->withFakes();
+
+        return view('pages.'.$page->template, $this->data);
+    }
+}
+```
+
+(3) Create the views for those templates (how those pages actually look - the HTML CSS JS) and place them in your ```resources/views/pages/``` directory. Inside those blade files, you can use the ```$page``` variable. That's where all the page content is stored. For more complicated pages, you can also use [fake fields](https://laravel-backpack.readme.io/docs/crud#section-extras-fake-fields-stored-as-json-in-the-database-) in your page templates. You'll also find those attributes in the ```$page``` variable.
 
 Note: if you find yourself in need of sending extra data to a view you load on multiple pages, you should consider [using a view composer](https://laravel.com/docs/5.3/views#view-composers);
 
@@ -114,8 +191,8 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) and [CONDUCT](CONDUCT.md) for details
 
 ## Overwriting Functionality
 
-If you need to modify how this works in a project: 
-- create a ```routes/backpack/pagemanager.php``` file; the package will see that, and load _your_ routes file, instead of the one in the package; 
+If you need to modify how this works in a project:
+- create a ```routes/backpack/pagemanager.php``` file; the package will see that, and load _your_ routes file, instead of the one in the package;
 - create controllers/models that extend the ones in the package, and use those in your new routes file;
 - modify anything you'd like in the new controllers/models;
 

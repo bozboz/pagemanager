@@ -22,46 +22,36 @@ trait PageTemplates
 
     protected function metas()
     {
-        $this->crud->addField(
-            [   // CustomHTML
-                        'name' => 'metas_separator',
-                        'type' => 'custom_html',
-                        'value' => '<br><h2>'.trans('backpack::pagemanager.metas').'</h2><hr>',
-            ]
-        );
-        $this->crud->addField(
-            [
-                        'name' => 'meta_title',
-                        'label' => trans('backpack::pagemanager.meta_title'),
-                        'fake' => true,
-                        'store_in' => 'extras',
-            ]
-        );
-        $this->crud->addField(
-            [
-                        'name' => 'meta_description',
-                        'label' => trans('backpack::pagemanager.meta_description'),
-                        'fake' => true,
-                        'store_in' => 'extras',
-            ]
-        );
-        $this->crud->addField(
-            [
-                        'name' => 'meta_keywords',
-                        'type' => 'textarea',
-                        'label' => trans('backpack::pagemanager.meta_keywords'),
-                        'fake' => true,
-                        'store_in' => 'extras',
-            ]
-        );
+        $this->crud->addField([
+            'name' => 'metas_separator',
+            'type' => 'custom_html',
+            'value' => '<br><h3>'.trans('backpack::pagemanager.metas').'</h3><hr>',
+        ]);
+        $this->crud->addField([
+            'name' => 'meta_title',
+            'label' => trans('backpack::pagemanager.meta_title'),
+            'fake' => true,
+            'store_in' => 'extras',
+        ]);
+        $this->crud->addField([
+            'name' => 'meta_description',
+            'label' => trans('backpack::pagemanager.meta_description'),
+            'fake' => true,
+            'store_in' => 'extras',
+        ]);
+        $this->crud->addField([
+            'name' => 'meta_keywords',
+            'type' => 'textarea',
+            'label' => trans('backpack::pagemanager.meta_keywords'),
+            'fake' => true,
+            'store_in' => 'extras',
+        ]);
 
-        $this->crud->addField(
-            [   // CustomHTML
+        $this->crud->addField([
             'name' => 'metas_end_separator',
             'type' => 'custom_html',
             'value' => '<br><hr>',
-            ]
-        );
+        ]);
     }
 
     private function basicPage()
@@ -69,13 +59,11 @@ trait PageTemplates
 
         $this->metas();
 
-        $this->crud->addField(
-            [
-                        'name' => 'content',
-                        'label' => trans('backpack::pagemanager.content'),
-                        'type' => 'wysiwyg',
-                        'placeholder' => trans('backpack::pagemanager.content_placeholder'),
-            ]
-        );
+        $this->crud->addField([
+            'name' => 'content',
+            'label' => trans('backpack::pagemanager.content'),
+            'type' => 'wysiwyg',
+            'placeholder' => trans('backpack::pagemanager.content_placeholder'),
+        ]);
     }
 }

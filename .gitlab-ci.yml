@@ -1,0 +1,69 @@
+stages:
+  - testing
+  - deploy
+
+cache:
+  key: "$CI_JOB_NAME-$CI_COMMIT_REF_SLUG"
+
+codestyle:
+  stage: testing
+  image: lorisleiva/laravel-docker
+  script:
+    - phpcs --extensions=php --standard=PSR2 src
+
+phpcpd:
+  stage: testing
+  image: lorisleiva/laravel-docker
+  script:
+    - test -f phpcpd.phar || curl -L https://phar.phpunit.de/phpcpd.phar -o phpcpd.phar
+    - php phpcpd.phar src/ --min-lines=50
+  cache:
+    paths:
+      - phpcpd.phar
+
+phplint:
+  stage: testing
+  image: pipelinecomponents/php-linter:latest
+  script:
+    - parallel-lint --colors .
+
+deploy:
+  stage: deploy
+  image: edbizarro/gitlab-ci-pipeline-php:7.3
+  environment:
+    name: satis
+    url: https://laravel-packages.staging.bozboz.co.uk
+  before_script:
+    ##
+    ## Install ssh-agent if not already installed, it is required by Docker.
+    ## (change apt-get to yum if you use an RPM-based image)
+    ##
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+
+    ##
+    ## Run ssh-agent (inside the build environment)
+    ##
+    - eval $(ssh-agent -s)
+
+    ##
+    ## Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
+    ## We're using tr to fix line endings which makes ed25519 keys work
+    ## without extra base64 encoding.
+    ## https://gitlab.com/gitlab-examples/ssh-private-key/issues/1#note_48526556
+    ##
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+
+    ##
+    ## Create the SSH directory and give it the right permissions
+    ##
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+
+    - ssh-keyscan -H gitlab.bozboz.co.uk >> ~/.ssh/known_hosts
+    - ssh-keyscan -H 192.168.4.231 >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - ssh -T git@gitlab.bozboz.co.uk
+
+    - git config --global http.sslVerify false
+  script:
+    - ssh -A deployer@192.168.4.231 "scl enable rh-php70 'cd /home/laravel_packages/project && php build.php'"

@@ -1,5 +1,5 @@
 <!-- Select template field. Used in Backpack/PageManager to redirect to a form with different fields if the template changes. A fork of the select_from_array field with an extra ID and an extra javascript file. -->
-@include('crud::fields.inc.wrapper_start')
+<div @include('crud::inc.field_wrapper_attributes') >
 
     <label>{{ $field['label'] }}</label>
     <select
@@ -31,8 +31,7 @@
     @if (isset($field['hint']))
         <p class="help-block">{!! $field['hint'] !!}</p>
     @endif
-@include('crud::fields.inc.wrapper_end')
-
+</div>
 
 {{-- ########################################## --}}
 {{-- Extra CSS and JS for this particular field --}}

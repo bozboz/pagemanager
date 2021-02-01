@@ -38,12 +38,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Backpack\\PageManager\\": "src"
+            "Bozboz\\PageManager\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Backpack\\PageManager\\": "tests"
+            "Bozboz\\PageManager\\": "tests"
         }
     },
     "scripts": {
@@ -55,7 +55,7 @@
         },
         "laravel": {
             "providers": [
-                "Backpack\\PageManager\\PageManagerServiceProvider"
+                "Bozboz\\PageManager\\PageManagerServiceProvider"
             ]
         }
     }

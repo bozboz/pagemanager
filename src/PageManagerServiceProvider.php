@@ -1,6 +1,6 @@
 <?php
 
-namespace Backpack\PageManager;
+namespace Bozboz\PageManager;
 
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;

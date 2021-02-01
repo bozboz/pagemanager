@@ -1,4 +1,4 @@
-# Backpack\PageManager (Bozboz'd)
+# Bozboz\PageManager (Bozboz'd)
 
 Forked from [Backpack PageManager](https://github.com/Laravel-Backpack/PageManager)
 
@@ -30,7 +30,7 @@ trait PageTemplates
 {
     /*
     |--------------------------------------------------------------------------
-    | Page Templates for Backpack\PageManager
+    | Page Templates for Bozboz\PageManager
     |--------------------------------------------------------------------------
     |
     | Each page template has its own method, that define what fields should show up using the Backpack\CRUD API.
@@ -102,7 +102,7 @@ composer require bozboz/pagemanager
 3) Publish the views, migrations and the PageTemplates trait:
 
 ```
-php artisan vendor:publish --provider="Backpack\PageManager\PageManagerServiceProvider"
+php artisan vendor:publish --provider="Bozboz\PageManager\PageManagerServiceProvider"
 ```
 
 4) Run the migration to have the database table we need:
@@ -140,7 +140,7 @@ Route::get('{page}/{subs?}', ['uses' => '\App\Http\Controllers\PageController@in
 
 namespace App\Http\Controllers;
 
-use Backpack\PageManager\app\Models\Page;
+use Bozboz\PageManager\app\Models\Page;
 use App\Http\Controllers\Controller;
 
 class PageController extends Controller
@@ -169,7 +169,7 @@ Note: if you find yourself in need of sending extra data to a view you load on m
 ## Extend
 
 If you need to make any modifications to the controller, model or request, you should:
-- make sure ```config/backpack/pagemanager.php``` is published; if not, publish it using ```php artisan vendor:publish --provider="Backpack\PageManager\PageManagerServiceProvider"```;
+- make sure ```config/backpack/pagemanager.php``` is published; if not, publish it using ```php artisan vendor:publish --provider="Bozboz\PageManager\PageManagerServiceProvider"```;
 - create a new controller/model that extends the one in the package;
 - enter controller or model in the pagemanager.php config file, and that's the one that the CRUD will be using;
 

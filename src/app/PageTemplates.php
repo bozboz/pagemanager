@@ -6,7 +6,7 @@ trait PageTemplates
 {
     /*
     |--------------------------------------------------------------------------
-    | Page Templates for Backpack\PageManager
+    | Page Templates for Bozboz\PageManager
     |--------------------------------------------------------------------------
     |
     | Each page template has its own method, that define what fields should show up using the Backpack\CRUD API.

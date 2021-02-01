@@ -1,6 +1,6 @@
 <?php
 
-namespace Backpack\PageManager\app\Http\Requests;
+namespace Bozboz\PageManager\app\Http\Requests;
 
 use App\Http\Requests\Request;
 

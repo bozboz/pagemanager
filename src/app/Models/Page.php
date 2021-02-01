@@ -1,6 +1,6 @@
 <?php
 
-namespace Backpack\PageManager\app\Models;
+namespace Bozboz\PageManager\app\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Cviebrock\EloquentSluggable\Sluggable;

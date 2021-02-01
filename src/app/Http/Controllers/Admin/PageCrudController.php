@@ -1,11 +1,11 @@
 <?php
 
-namespace Backpack\PageManager\app\Http\Controllers\Admin;
+namespace Bozboz\PageManager\app\Http\Controllers\Admin;
 
 use App\PageTemplates;
 // VALIDATION: change the requests to match your own file names if you need form validation
 use Backpack\CRUD\app\Http\Controllers\CrudController;
-use Backpack\PageManager\app\Http\Requests\PageRequest;
+use Bozboz\PageManager\app\Http\Requests\PageRequest;
 use Str;
 
 class PageCrudController extends CrudController
@@ -27,7 +27,7 @@ class PageCrudController extends CrudController
         $this->crud->allowAccess('clone');
         $this->crud->setDefaultPageLength(-1); // show all
 
-        $this->crud->setModel(config('backpack.pagemanager.page_model_class', 'Backpack\PageManager\app\Models\Page'));
+        $this->crud->setModel(config('backpack.pagemanager.page_model_class', 'Bozboz\PageManager\app\Models\Page'));
         $this->crud->setRoute(config('backpack.base.route_prefix').'/page');
         $this->crud->setEntityNameStrings(trans('backpack::pagemanager.page'), trans('backpack::pagemanager.pages'));
 
